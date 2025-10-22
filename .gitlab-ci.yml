@@ -1,0 +1,19 @@
+stages:
+  - build
+  - test
+  - check
+  - push
+  - deploy
+
+build:
+    stage: build
+    image: kitware/cmake:ci-cuda13.0-x86_64-2025-10-20
+    script:
+        - mkdir build
+        - cd build
+        - cmake ..
+        - cmake --build .
+    artifacts:
+        paths:
+        - build/
+        expire_in: 1 hour
