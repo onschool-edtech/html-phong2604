@@ -4,6 +4,9 @@ stages:
 build:
     stage: build
     image: ubuntu:22.04
+    before_script:
+      - apt-get update -y
+      - apt-get install -y build-essential cmake clang-tidy
     script:
       - mkdir build
       - cd build
