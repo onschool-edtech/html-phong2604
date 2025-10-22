@@ -29,6 +29,8 @@ test:
     script:
     - cd build
     - ctest --output-on-failure
+    tags: 
+      - student-code
 
 lint:
   stage: lint
@@ -38,3 +40,5 @@ lint:
     - apt-get install -y clang-tidy
   script:
     - clang-tidy $(find . -name "*.cpp" -or -name "*.c") -- -I.
+  tags: 
+    - student-code  
