@@ -1,5 +1,7 @@
 stages:
   - build
+  - test
+  - lint
 
 build:
     stage: build
@@ -28,7 +30,6 @@ test:
     - cd build
     - ctest --output-on-failure
 
-# 3️⃣ Run clang-tidy lint
 lint:
   stage: lint
   image: ubuntu:22.04
