@@ -3,8 +3,10 @@ stages:
 
 build:
     stage: build
-    image: kitware/cmake:ci-debian12-x86_64-2025-03-31
-
+    image: ubuntu:22.04
+    before_script:
+      - apt-get update -y
+      - apt-get install -y cmake
     script:
       - mkdir build
       - cd build
