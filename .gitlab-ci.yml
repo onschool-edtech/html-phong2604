@@ -3,10 +3,13 @@ stages:
   - test
   - lint
 
+default:
+  image: ubuntu:22.04
+  before_script:
+    - apt-get update -y
 build:
     stage: build
     before_script:
-      - apt-get update -y
       - apt-get install -y cmake build-essential
     script:
       - mkdir build
@@ -21,10 +24,8 @@ build:
       - student-code
 test:
     stage: test
-    image: ubuntu:22.04
     needs: ["build"]
     before_script:
-    - apt-get update -y
     - apt-get install -y cmake
     script:
     - cd build
@@ -34,9 +35,7 @@ test:
 
 lint:
   stage: lint
-  image: ubuntu:22.04
   before_script:
-    - apt-get update -y
     - apt-get install -y clang-tidy
   script:
     - clang-tidy $(find . -name "*.cpp" -or -name "*.c") -- -I.
