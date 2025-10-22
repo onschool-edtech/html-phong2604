@@ -3,7 +3,7 @@ stages:
 
 build:
     stage: build
-    image: ci-debian12-x86_64-2025-03-31
+    image: kitware/cmake:ci-debian12-x86_64-2025-03-31
 
     script:
       - mkdir build
