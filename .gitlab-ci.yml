@@ -17,3 +17,23 @@ build:
       expire_in: 1 hour
     tags: 
       - student-code
+test:
+    stage: test
+    image: ubuntu:22.04
+    needs: ["build"]
+    before_script:
+    - apt-get update -y
+    - apt-get install -y cmake
+    script:
+    - cd build
+    - ctest --output-on-failure
+
+# 3️⃣ Run clang-tidy lint
+lint:
+  stage: lint
+  image: ubuntu:22.04
+  before_script:
+    - apt-get update -y
+    - apt-get install -y clang-tidy
+  script:
+    - clang-tidy $(find . -name "*.cpp" -or -name "*.c") -- -I.
