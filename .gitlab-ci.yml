@@ -8,30 +8,30 @@ default:
   before_script:
     - apt-get update -y
 build:
-    stage: build
-    before_script:
-      - apt-get install -y cmake build-essential
-    script:
-      - mkdir build
-      - cd build
-      - cmake ..
-      - cmake --build .
-    artifacts:
-      paths:
-      - build/
-      expire_in: 1 hour
-    tags: 
-      - student-code
-test:
-    stage: test
-    needs: ["build"]
-    before_script:
-    - apt-get install -y cmake
-    script:
+  stage: build
+  before_script:
+    - apt-get install -y cmake build-essential
+  script:
+    - mkdir build
     - cd build
-    - ctest --output-on-failure
-    tags: 
-      - student-code
+    - cmake ..
+    - cmake --build .
+  artifacts:
+    paths:
+    - build/
+    expire_in: 1 hour
+  tags: 
+    - student-code
+test:
+  stage: test
+  needs: ["build"]
+  before_script:
+  - apt-get install -y cmake
+  script:
+  - cd build
+  - ctest --output-on-failure
+  tags: 
+    - student-code
 
 lint:
   stage: lint
