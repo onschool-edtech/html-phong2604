@@ -5,11 +5,11 @@ stages:
 
 default:
   image: ubuntu:22.04
-  before_script:
-    - apt-get update -y
+
 build:
   stage: build
   before_script:
+    - apt-get update -y
     - apt-get install -y cmake build-essential
   script:
     - mkdir build
@@ -26,7 +26,8 @@ test:
   stage: test
   needs: ["build"]
   before_script:
-  - apt-get install -y cmake
+    - apt-get update -y
+    - apt-get install -y cmake
   script:
   - cd build
   - ctest --output-on-failure
@@ -36,6 +37,7 @@ test:
 lint:
   stage: lint
   before_script:
+    - apt-get update -y
     - apt-get install -y clang-tidy
   script:
     - clang-tidy $(find . -name "*.cpp" -or -name "*.c") -- -I.
