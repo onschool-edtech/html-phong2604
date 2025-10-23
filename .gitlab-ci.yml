@@ -6,7 +6,7 @@ stages:
 
 build:
   stage: build
-  image: cmake:latest
+  image: kitware/cmake:latest
   before_script:
     - apt-get update -y
     - apt-get install -y build-essential
@@ -24,7 +24,7 @@ build:
 test:
   stage: test
   needs: ["build"]
-  image: cmake:latest
+  image: kitware/cmake:latest
   script:
   - cd build
   - ctest --output-on-failure
