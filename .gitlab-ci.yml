@@ -6,7 +6,8 @@ stages:
 
 build:
   stage: build
-  image: kitware/cmake:latest
+  image: kitware/cmake:ci-debian12-x86_64-2025-03-31
+
   before_script:
     - apt-get update -y
     - apt-get install -y build-essential
@@ -24,7 +25,8 @@ build:
 test:
   stage: test
   needs: ["build"]
-  image: kitware/cmake:latest
+  image: kitware/cmake:ci-debian12-x86_64-2025-03-31
+
   script:
   - cd build
   - ctest --output-on-failure
