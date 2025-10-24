@@ -66,5 +66,24 @@ push:
     - echo "🚀 Pushing Docker image to DockerHub..."
     - echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin $REGISTRY
     - docker push $IMAGE_NAME:$IMAGE_TAG
-  only:
-    - main
+deploy:
+  stage: deploy
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache openssh-client
+  script:
+    - echo "🚀 Deploying to remote server..."
+    # Add server host key to known_hosts
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - chmod 700 ~/.ssh
+    - ssh-keyscan -H "$DEPLOY_SERVER_IP" >> ~/.ssh/known_hosts
+
+    # SSH into server and deploy
+    - ssh $DEPLOY_USER@$DEPLOY_SERVER_IP << EOF
+        docker login -u "$DOCKERHUB_USERNAME" -p "$DOCKERHUB_PASSWORD"
+        docker pull $IMAGE_NAME:$IMAGE_TAG
+        docker stop frontend-app || true
+        docker rm frontend-app || true
+        docker run -d --name frontend-app -p 80:80 $IMAGE_NAME:$IMAGE_TAG
+      EOF
