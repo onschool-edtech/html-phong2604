@@ -71,13 +71,11 @@ deploy:
   before_script:
     - apt-get update && apt-get install -y openssh-client
   script:
+    - 'command -v ssh-agent >/dev/null || ( apk add --update openssh )' 
     - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh
-    - echo "$DNU_STG_APP_NODE_01_KEY" | base64 -d > ~/.ssh/id_rsa
-    - chmod 400 ~/.ssh/id_rsa
-    - |
-      ssh -o StrictHostKeyChecking=accept-new -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER_IP "
-        docker login -u \"$DOCKERHUB_USERNAME\" -p \"$DOCKERHUB_PASSWORD\" &&
-        docker rm -f frontend-app || true &&
-        docker run -d --name frontend-app -p 88:80 \"$IMAGE_NAME:$IMAGE_TAG\"
-      "
+    - chmod 700 ~/.ssh
+    - ssh-keyscan $DEPLOY_SERVER_IP >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+    - ssh $DEPLOY_USER@$DEPLOY_SERVER_IP "hostname && echo 'Welcome!!!' > welcome.txt"
