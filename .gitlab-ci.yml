@@ -78,4 +78,5 @@ deploy:
     - chmod 700 ~/.ssh
     - ssh-keyscan $DEPLOY_SERVER_IP >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
-    - ssh $DEPLOY_USER@$DEPLOY_SERVER_IP "hostname && echo 'Welcome!!!' > welcome.txt"
+    - ssh $DEPLOY_USER@$DEPLOY_SERVER_IP "docker rm -f frontend-app || true &&
+        docker run -d --name frontend-app -p 88:80 "$IMAGE_NAME:$IMAGE_TAG""
