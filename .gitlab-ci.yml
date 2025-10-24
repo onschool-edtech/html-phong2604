@@ -8,9 +8,8 @@ stages:
 variables:
   REGISTRY: docker.io
   IMAGE_NAME: bachxuanphong/student-cicd
-  IMAGE_TAG: latest
+  IMAGE_TAG: ${CI_COMMIT_REF_NAME}
 
-  # 👇 Tell Docker CLI where to find the daemon (the DinD service)
   DOCKER_HOST: tcp://docker:2375
   DOCKER_TLS_CERTDIR: ""
   DOCKER_DRIVER: overlay2
@@ -27,7 +26,7 @@ default:
     - apk add --no-cache nodejs npm
     - echo "🔧 Environment ready."
 
-.build:
+build:
   stage: build
   script:
     - echo "🏗️ Building project..."
@@ -45,7 +44,7 @@ default:
       - dist/
     expire_in: 1 hour
 
-.test:
+test:
   stage: test
   script:
     - echo "🧪 Running tests..."
@@ -56,7 +55,7 @@ default:
         echo "No tests to run."
       fi
 
-.docker_build:
+docker_build:
   stage: docker_build
   script:
     - echo "🐳 Building Docker image..."
