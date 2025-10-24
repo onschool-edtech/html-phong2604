@@ -71,18 +71,12 @@ deploy:
   before_script:
     - apk add --no-cache openssh-client
   script:
-    - echo "🚀 Deploying to remote server..."
-    # Add server host key to known_hosts
-    - mkdir -p ~/.ssh
     - eval $(ssh-agent -s)
-    - echo "$SSH_PRIVATE_KEY" | base64 -d > ~/.ssh/id_rsa
-
-    - chmod 700 ~/.ssh
-    - |
-      echo "🚀 Deploying to $DEPLOY_SERVER_IP ..."
-      ssh -o StrictHostKeyChecking=accept-new -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER_IP '
+    - mkdir -p ~/.ssh
+    - echo $DNU_STG_APP_NODE_01_KEY | base64 -d > ~/.ssh/id_rsa
+    - chmod 400 ~/.ssh/id_rsa
+    - ssh -o StrictHostKeyChecking=accept-new -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER_IP '
         docker login -u "$DOCKERHUB_USERNAME" -p "$DOCKERHUB_PASSWORD" &&
-        docker pull "$IMAGE_NAME:$IMAGE_TAG" &&
         docker rm -f frontend-app || true &&
         docker run -d --name frontend-app -p 88:80 "$IMAGE_NAME:$IMAGE_TAG"
       '
