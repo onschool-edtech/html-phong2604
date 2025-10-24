@@ -75,4 +75,4 @@ deploy:
     - mkdir -p ~/.ssh
     - echo $DNU_STG_APP_NODE_01_KEY | base64 -d > ~/.ssh/id_rsa
     - chmod 400 ~/.ssh/id_rsa
-    - ssh -o StrictHostKeyChecking=accept-new -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER_IP 'ls'
+    - ssh -o StrictHostKeyChecking=accept-new -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER_IP "ls"
