@@ -80,13 +80,10 @@ deploy:
     - chmod 700 ~/.ssh
     - ssh-keyscan -H "$DEPLOY_SERVER_IP" >> ~/.ssh/known_hosts
 
-    # SSH into server and deploy
-    - ssh $DEPLOY_USER@$DEPLOY_SERVER_IP << EOF
-        docker login -u "$DOCKERHUB_USERNAME" -p "$DOCKERHUB_PASSWORD"
-        docker pull $IMAGE_NAME:$IMAGE_TAG
-        docker stop frontend-app || true
-        docker rm frontend-app || true
+    - ssh $DEPLOY_USER@$DEPLOY_SERVER_IP "
+        docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD &&
+        docker rm -f frontend-app || true &&
         docker run -d --name frontend-app -p 80:80 $IMAGE_NAME:$IMAGE_TAG
-      EOF
+      "
 
 
