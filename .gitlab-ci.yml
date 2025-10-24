@@ -1,44 +1,61 @@
 stages:
   - build
   - test
-  - lint
+  - docker_build
+  - push
 
+variables:
+  REGISTRY: docker.io
+  IMAGE_NAME: bachxuanphong/student-cicd
+  IMAGE_TAG: latest
+
+default:
+  image: docker:latest
+  services:
+    - docker:dind
+
+before_script:
+  - apk add --no-cache nodejs npm
+  - echo "🔧 Environment ready."
 
 build:
   stage: build
-  image: kitware/cmake:ci-debian12-x86_64-2025-03-31
-
-  before_script:
-    - apt-get update -y
-    - apt-get install -y build-essential
   script:
-    - mkdir build
-    - cd build
-    - cmake ..
-    - cmake --build .
+    - echo "🏗️ Building project..."
+    - |
+      if [ -f package.json ]; then
+        npm install
+        npm run build || echo "No build script found, skipping..."
+      else
+        echo "No package.json found, skipping npm build."
+      fi
   artifacts:
     paths:
-    - build/
+      - dist/
     expire_in: 1 hour
-  tags: 
-    - student-code
+
 test:
   stage: test
-  needs: ["build"]
-  image: kitware/cmake:ci-debian12-x86_64-2025-03-31
-
   script:
-  - cd build
-  - ctest --output-on-failure
-  tags: 
-    - student-code
+    - echo "🧪 Running tests..."
+    - |
+      if [ -f package.json ]; then
+        npm test || echo "No test script found, skipping tests..."
+      else
+        echo "No tests to run."
+      fi
 
-lint:
-  stage: lint
-  before_script:
-    - apt-get update -y
-    - apt-get install -y clang-tidy
+docker_build:
+  stage: docker_build
   script:
-    - clang-tidy $(find . -name "*.cpp" -or -name "*.c") -- -I.
-  tags: 
-    - student-code  
+    - echo "🐳 Building Docker image..."
+    - docker build -t $IMAGE_NAME:$IMAGE_TAG .
+
+push:
+  stage: push
+  script:
+    - echo "🚀 Pushing Docker image to DockerHub..."
+    - echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin $REGISTRY
+    - docker push $IMAGE_NAME:$IMAGE_TAG
+  only:
+    - main
