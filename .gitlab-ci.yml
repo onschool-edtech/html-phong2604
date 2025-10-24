@@ -8,7 +8,9 @@ variables:
   REGISTRY: docker.io
   IMAGE_NAME: bachxuanphong/student-cicd
   IMAGE_TAG: latest
-  DOCKER_HOST: tcp://docker:2375/
+
+  # 👇 Tell Docker CLI where to find the daemon (the DinD service)
+  DOCKER_HOST: tcp://docker:2375
   DOCKER_TLS_CERTDIR: ""
   DOCKER_DRIVER: overlay2
 
@@ -16,13 +18,13 @@ default:
   image: docker:latest
   services:
     - name: docker:dind
-      command: ["--tls=false"] 
+      alias: docker
+      command: ["--tls=false"]
   tags:
     - student-code
-
-before_script:
-  - apk add --no-cache nodejs npm
-  - echo "🔧 Environment ready."
+  before_script:
+    - apk add --no-cache nodejs npm
+    - echo "🔧 Environment ready."
 
 build:
   stage: build
@@ -55,6 +57,7 @@ docker_build:
   stage: docker_build
   script:
     - echo "🐳 Building Docker image..."
+    - docker info
     - docker build -t $IMAGE_NAME:$IMAGE_TAG .
 
 push:
