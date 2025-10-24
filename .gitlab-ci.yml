@@ -79,11 +79,16 @@ deploy:
 
     - chmod 700 ~/.ssh
     - ssh-keyscan -H "$DEPLOY_SERVER_IP" >> ~/.ssh/known_hosts
-
-    - ssh $DEPLOY_USER@$DEPLOY_SERVER_IP "
-        docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD &&
-        docker rm -f frontend-app || true &&
+    - |
+      ssh -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_SERVER_IP << 'EOF'
+        echo "🔑 Logging into Docker..."
+        docker login -u "$DOCKERHUB_USERNAME" -p "$DOCKERHUB_PASSWORD"
+        echo "🐳 Pulling image..."
+        docker pull $IMAGE_NAME:$IMAGE_TAG
+        echo "🧹 Cleaning old container..."
+        docker rm -f frontend-app || true
+        echo "🚀 Running new container..."
         docker run -d --name frontend-app -p 80:80 $IMAGE_NAME:$IMAGE_TAG
-      "
-
+        echo "✅ Deployment complete!"
+      EOF
 
