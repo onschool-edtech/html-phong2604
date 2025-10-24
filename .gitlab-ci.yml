@@ -74,7 +74,9 @@ deploy:
     - echo "🚀 Deploying to remote server..."
     # Add server host key to known_hosts
     - mkdir -p ~/.ssh
+    - eval $(ssh-agent -s)
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+
     - chmod 700 ~/.ssh
     - ssh-keyscan -H "$DEPLOY_SERVER_IP" >> ~/.ssh/known_hosts
 
