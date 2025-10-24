@@ -8,11 +8,15 @@ variables:
   REGISTRY: docker.io
   IMAGE_NAME: bachxuanphong/student-cicd
   IMAGE_TAG: latest
+  DOCKER_HOST: tcp://docker:2375/
+  DOCKER_TLS_CERTDIR: ""
+  DOCKER_DRIVER: overlay2
 
 default:
   image: docker:latest
   services:
-    - docker:dind
+    - name: docker:dind
+      command: ["--tls=false"] 
   tags:
     - student-code
 
