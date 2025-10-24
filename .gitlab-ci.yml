@@ -71,6 +71,7 @@ deploy:
   before_script:
     - apt-get update && apt-get install -y openssh-client
   script:
+    - eval $(ssh-agent -s)
     - mkdir -p ~/.ssh
     - echo "$DNU_STG_APP_NODE_01_KEY" | base64 -d > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
