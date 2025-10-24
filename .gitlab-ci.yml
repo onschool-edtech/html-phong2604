@@ -82,5 +82,5 @@ deploy:
         docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD &&
         docker pull $IMAGE_NAME:$IMAGE_TAG &&
         docker rm -f frontend-app || true &&
-        docker run -d --name frontend-app -p 80:80 $IMAGE_NAME:$IMAGE_TAG
+        docker run -d --name frontend-app -p 88:80 $IMAGE_NAME:$IMAGE_TAG
       "
