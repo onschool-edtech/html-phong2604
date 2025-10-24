@@ -71,8 +71,12 @@ deploy:
   before_script:
     - apk add --no-cache openssh-client
   script:
-    - eval $(ssh-agent -s)
     - mkdir -p ~/.ssh
-    - echo $DNU_STG_APP_NODE_01_KEY | base64 -d > ~/.ssh/id_rsa
-    - chmod 700 ~/.ssh/id_rsa
-    - ssh -o StrictHostKeyChecking=accept-new -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER_IP "ls"
+    - echo "$DNU_STG_APP_NODE_01_KEY" | base64 -d > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - |
+      ssh -o StrictHostKeyChecking=accept-new -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER_IP "
+        docker login -u \"$DOCKERHUB_USERNAME\" -p \"$DOCKERHUB_PASSWORD\" &&
+        docker rm -f frontend-app || true &&
+        docker run -d --name frontend-app -p 88:80 \"$IMAGE_NAME:$IMAGE_TAG\"
+      "
