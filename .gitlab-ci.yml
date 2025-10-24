@@ -67,7 +67,7 @@ push:
   stage: push
   script:
     - echo "🚀 Pushing Docker image to DockerHub..."
-    - echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin $REGISTRY
+    - docker login -u "$DOCKERHUB_USERNAME" -p "$DOCKERHUB_PASSWORD" $REGISTRY
     - docker push $IMAGE_NAME:$IMAGE_TAG
 deploy:
   stage: deploy
