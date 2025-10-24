@@ -38,6 +38,8 @@ build:
       else
         echo "No package.json found, skipping npm build."
       fi
+  dependencies:
+    - build 
   artifacts:
     paths:
       - dist/
