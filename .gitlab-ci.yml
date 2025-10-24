@@ -3,6 +3,7 @@ stages:
   - test
   - docker_build
   - push
+  - deploy
 
 variables:
   REGISTRY: docker.io
@@ -87,4 +88,4 @@ deploy:
         docker rm frontend-app || true
         docker run -d --name frontend-app -p 80:80 $IMAGE_NAME:$IMAGE_TAG
       EOF
-      
+
