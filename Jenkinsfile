@@ -52,20 +52,19 @@ pipeline {
         }
 
         stage('Docker Build & Push') {
-            agent { docker { image 'docker:27-dind' args '-v /var/run/docker.sock:/var/run/docker.sock' } }
+            agent { label 'docker' } // any node with Docker installed
             steps {
                 script {
                     echo "🐳 Building Docker image..."
                     sh '''
-                        docker info
                         docker build -t $IMAGE_NAME:$IMAGE_TAG .
-                        echo "🚀 Pushing Docker image to DockerHub..."
                         echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin $REGISTRY
                         docker push $IMAGE_NAME:$IMAGE_TAG
                     '''
                 }
             }
         }
+
 
         stage('Deploy') {
             agent { label 'any' }
