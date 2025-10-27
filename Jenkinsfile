@@ -52,7 +52,7 @@ pipeline {
         }
 
         stage('Docker Build & Push') {
-            agent { label 'any' } 
+            agent any
             steps {
                 script {
                     echo "🐳 Building Docker image..."
@@ -67,7 +67,7 @@ pipeline {
 
 
         stage('Deploy') {
-            agent { label 'any' }
+            agent any
             steps {
                 script {
                     echo "🚀 Deploying to remote server..."
