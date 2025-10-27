@@ -8,8 +8,8 @@ pipeline {
         DOCKERHUB_USERNAME = credentials('dockerhub-username')
         DOCKERHUB_PASSWORD = credentials('dockerhub-password')
         SSH_PRIVATE_KEY = credentials('deploy-ssh-key')
-        DEPLOY_SERVER_IP = "your.deploy.server.ip"
-        DEPLOY_USER = "your_ssh_user"
+        DEPLOY_SERVER_IP = "192.168.30.26"
+        DEPLOY_USER = "phongbv"
     }
 
     stages {
