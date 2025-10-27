@@ -70,21 +70,17 @@ pipeline {
             agent any
             steps {
                 script {
-                    echo "🚀 Deploying to remote server..."
-                    sh '''
-                        eval $(ssh-agent -s)
-                        echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-                        mkdir -p ~/.ssh
-                        chmod 700 ~/.ssh
-                        ssh-keyscan $DEPLOY_SERVER_IP >> ~/.ssh/known_hosts
-                        chmod 644 ~/.ssh/known_hosts
+                    withCredentials([sshUserPrivateKey(credentialsId: 'deploy-ssh-key',
+                                                       keyFileVariable: 'SSH_KEY',
+                                                       usernameVariable: 'SSH_USER')]) {
+                        sh '''
+                            echo "🚀 Deploying to remote server..."
+                            eval $(ssh-agent -s)
+                            ssh-add $SSH_KEY
+                            ssh -o StrictHostKeyChecking=no $SSH_USER@$DEPLOY_SERVER_IP "docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD && docker rm -f frontend-app || true && docker run -d --name frontend-app -p 88:80 $IMAGE_NAME:$IMAGE_TAG"
+                        '''
+                    }
 
-                        ssh $DEPLOY_USER@$DEPLOY_SERVER_IP "
-                            docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD &&
-                            docker rm -f frontend-app || true &&
-                            docker run -d --name frontend-app -p 88:80 $IMAGE_NAME:$IMAGE_TAG
-                        "
-                    '''
                 }
             }
         }
