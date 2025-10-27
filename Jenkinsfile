@@ -52,7 +52,7 @@ pipeline {
         }
 
         stage('Docker Build & Push') {
-            agent { label 'docker' } // any node with Docker installed
+            agent { label 'any' } 
             steps {
                 script {
                     echo "🐳 Building Docker image..."
